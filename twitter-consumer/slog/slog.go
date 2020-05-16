@@ -20,7 +20,7 @@ func init() {
 
 func Logger(application string, class string) *logrus.Entry {
 	var hook *logrustash.Hook
-	url := env.GetOrDefault("LOGSTASH_URL", "192.168.15.21:5000")
+	url := env.GetOrDefault("LOGSTASH_URL", "192.168.0.153:5000")
 	log := logrus.New()
 
 	for {
