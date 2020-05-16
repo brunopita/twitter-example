@@ -1,0 +1,17 @@
+version: "2"
+service:
+  twitter-consumer:
+    build: twitter-consumer/Dockerfile
+    environment: 
+      - TW_CLIENT_ID: QjvLHbuPh9mp8wsF9VIKi4UwS
+      - TW_CLIENT_SECRETE: 1W7w5CWvEnSIFR7YZlcf1aYaHihCJC6rRcwwd5ZDylffGuMYGm
+      - TW_HASHTAG: gopher
+  postgresql:
+    image: postgresql:12.2
+    environment: 
+      - POSTGRES_USER: twitter
+      - POSTGRES_PASSWORD: teste@123
+    volumes:
+    - ./postgres:/var/lib/postgres/data
+  ports: 
+    - 15423:5432
