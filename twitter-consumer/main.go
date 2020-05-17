@@ -38,21 +38,22 @@ func main() {
 		}
 		for _, val := range search.Statuses {
 			var twitteUser tdao.User
-			var twitte tdao.Tweet
+			var tweet tdao.Tweet
 
 			db, err := spg.GetConnection(host, port, user, password, dbname)
 			if err != nil {
 				log.Error(err)
 			}
+			defer db.Close()
 
-			twitteUser = tdao.BuiildUser(val.User)
-			err := tdao.InsertUser(twitteUser)
+			twitteUser = tdao.BuildUser(val.User)
+			err = tdao.InsertUser(twitteUser, db)
 			if err != nil {
 				log.Error(err)
 			}
 
-			twitte = tdao.BuildTweet(val, hashtag)
-			err := tdao.InsertTweet(tweet)
+			tweet = tdao.BuilTweet(val, hashtag)
+			err = tdao.InsertTweet(tweet, db)
 			if err != nil {
 				log.Error(err)
 			}

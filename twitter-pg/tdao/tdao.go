@@ -79,7 +79,7 @@ func GetPostByHour(db *sql.DB) ([]HourQtty, error) {
 	return result, nil
 }
 
-func BuiildUser(val *twitter.User) User {
+func BuildUser(val *twitter.User) User {
 	var user User
 	user.Name = val.Name
 	user.Id = val.ID
