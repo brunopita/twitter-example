@@ -5,7 +5,7 @@ import (
 	"github.com/brunopita/twitter-consumer/client"
 	"github.com/brunopita/twitter-consumer/search"
 	"github.com/brunopita/twitter-consumer/slog"
-	"github.com/dghubble/go-twitter/twitter"
+	"github.com/brunopita/twitter-example/twitter-pg/tdao"
 	"github.com/sirupsen/logrus"
 )
 
@@ -30,8 +30,9 @@ func main() {
 			log.Errorln(err)
 		}
 		for _, val := range search.Statuses {
-			var twitte twitter.Tweet
-			twitte = val
+			var twitte tdao.Twitter
+			var user tdao.User
+
 			// log.Info(twitte.User.FollowersCount)
 			log.Info(twitte.CreatedAt)
 			log.Info(twitte.Entities.Hashtags)

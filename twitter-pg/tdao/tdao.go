@@ -1,4 +1,4 @@
-package dao
+package tdao
 
 import (
 	"database/sql"
