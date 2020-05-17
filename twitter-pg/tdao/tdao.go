@@ -43,6 +43,18 @@ func InsertUser(user User, db *sql.DB) error {
 	return nil
 }
 
+func DeleteUser(id int64, db *sql.DB) error {
+	var query = "DELETE FROM tb_user where id = $1"
+	db.QueryRow(query, id)
+	return nil
+}
+
+func DeleteTweet(id int64, db *sql.DB) error {
+	var query = "DELETE FROM tb_tweet where id = $1"
+	db.QueryRow(query, id)
+	return nil
+}
+
 func GetTopFiveUserFollowers(db *sql.DB) ([]User, error) {
 	var result []User
 	var query = "SELECT name, followers FROM USER ORDER BY followers DESC limit 5"

@@ -5,8 +5,6 @@ import (
 	"github.com/brunopita/twitter-example/twitter-consumer/client"
 	"github.com/brunopita/twitter-example/twitter-consumer/search"
 	"github.com/brunopita/twitter-example/twitter-consumer/slog"
-	"github.com/brunopita/twitter-example/twitter-pg/spg"
-	"github.com/brunopita/twitter-example/twitter-pg/tdao"
 	"github.com/sirupsen/logrus"
 )
 
@@ -37,26 +35,27 @@ func main() {
 			log.Errorln(err)
 		}
 		for _, val := range search.Statuses {
-			var twitteUser tdao.User
-			var tweet tdao.Tweet
+			// var twitteUser tdao.User
+			// var tweet tdao.Tweet
 
-			db, err := spg.GetConnection(host, port, user, password, dbname)
-			if err != nil {
-				log.Error(err)
-			}
-			defer db.Close()
+			// db, err := spg.GetConnection(host, port, user, password, dbname)
+			// if err != nil {
+			// 	log.Error(err)
+			// }
+			// defer db.Close()
 
-			twitteUser = tdao.BuildUser(val.User)
-			err = tdao.InsertUser(twitteUser, db)
-			if err != nil {
-				log.Error(err)
-			}
+			// twitteUser = tdao.BuildUser(val.User)
+			// err = tdao.InsertUser(twitteUser, db)
+			// if err != nil {
+			// 	log.Error(err)
+			// }
 
-			tweet = tdao.BuilTweet(val, hashtag)
-			err = tdao.InsertTweet(tweet, db)
-			if err != nil {
-				log.Error(err)
-			}
+			// tweet = tdao.BuildTweet(&val, hashtag)
+			// err = tdao.InsertTweet(tweet, db)
+			// if err != nil {
+			// 	log.Error(err)
+			// }
+			log.Info(val.CreatedAt)
 		}
 	}
 }

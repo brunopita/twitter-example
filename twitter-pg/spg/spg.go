@@ -3,6 +3,8 @@ package spg
 import (
 	"database/sql"
 	"fmt"
+
+	_ "github.com/lib/pq"
 )
 
 func GetConnection(host, port, user, password, dbname string) (*sql.DB, error) {
