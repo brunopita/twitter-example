@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/brunopita/twitter-example/twitter-pg/utils"
+	"github.com/dghubble/go-twitter/twitter"
 )
 
 type Tweet struct {
@@ -76,4 +77,22 @@ func GetPostByHour(db *sql.DB) ([]HourQtty, error) {
 		result = append(result, h)
 	}
 	return result, nil
+}
+
+func BuiildUser(val *twitter.User) User {
+	var user User
+	user.Name = val.Name
+	user.Id = val.ID
+	user.Followers = val.FollowersCount
+	user.Locate = val.Location
+	return user
+}
+
+func BuildTweet(val *twitter.Tweet, hashtag string) Tweet {
+	var tweet Tweet
+	tweet.Id = val.ID
+	tweet.CreateAt = val.CreatedAt
+	tweet.Hashtag = hashtag
+	tweet.IdUser = val.User.ID
+	return tweet
 }
