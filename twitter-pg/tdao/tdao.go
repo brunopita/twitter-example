@@ -2,6 +2,7 @@ package tdao
 
 import (
 	"database/sql"
+	"log"
 
 	"github.com/brunopita/twitter-example/twitter-pg/utils"
 	"github.com/dghubble/go-twitter/twitter"
@@ -57,14 +58,14 @@ func DeleteTweet(id int64, db *sql.DB) error {
 
 func GetTopFiveUserFollowers(db *sql.DB) ([]User, error) {
 	var result []User
-	var query = "SELECT name, followers FROM tb_user ORDER BY followers DESC limit 5"
+	var query = "SELECT name, followers, locate FROM tb_user ORDER BY followers DESC limit 5"
 	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
 	}
 	for rows.Next() {
 		var u User
-		err := rows.Scan(&u.Name, &u.Followers)
+		err := rows.Scan(&u.Name, &u.Followers, &u.Locate)
 		if err != nil {
 			return nil, err
 		}
@@ -87,6 +88,7 @@ func GetPostByHour(db *sql.DB) ([]HourQtty, error) {
 			return nil, err
 		}
 		result = append(result, h)
+		log.Printf("%v", h)
 	}
 	return result, nil
 }
