@@ -29,18 +29,24 @@ type HourQtty struct {
 }
 
 func InsertTweet(tweet Tweet, db *sql.DB) error {
-	var query = "INSERT INTO tb_tweet values ($1, $2, $3, $4, $5)"
+	var query = "INSERT INTO tb_tweet values ($1, $2, $3, $4, $5) ON CONFLICT (id) DO NOTHING"
 	createAt, err := utils.StringToTimestampPostgres(tweet.CreateAt)
 	if err != nil {
 		return err
 	}
-	db.QueryRow(query, tweet.Id, tweet.Message, tweet.IdUser, createAt, tweet.Hashtag)
+	_, err = db.Exec(query, tweet.Id, tweet.Message, tweet.IdUser, createAt, tweet.Hashtag)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func InsertUser(user User, db *sql.DB) error {
-	var query = "INSERT INTO tb_user values ($1, $2, $3, $4)"
-	db.QueryRow(query, user.Id, user.Name, user.Followers, user.Locate)
+	var query = "INSERT INTO tb_user values ($1, $2, $3, $4) ON CONFLICT (id) DO NOTHING"
+	_, err := db.Exec(query, user.Id, user.Name, user.Followers, user.Locate)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
