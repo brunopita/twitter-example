@@ -57,7 +57,7 @@ func DeleteTweet(id int64, db *sql.DB) error {
 
 func GetTopFiveUserFollowers(db *sql.DB) ([]User, error) {
 	var result []User
-	var query = "SELECT name, followers FROM USER ORDER BY followers DESC limit 5"
+	var query = "SELECT name, followers FROM tb_user ORDER BY followers DESC limit 5"
 	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
