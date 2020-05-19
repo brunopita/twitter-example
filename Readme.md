@@ -18,3 +18,4 @@ Pré requisitos:
 Execução: 
 
  - docker-compose up --build
+

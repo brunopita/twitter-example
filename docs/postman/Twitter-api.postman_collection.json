@@ -1,0 +1,88 @@
+{
+	"info": {
+		"_postman_id": "9f632fe9-1757-436e-99d9-fe31b42b5ab6",
+		"name": "Twitter-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "top-five-follow",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/top-five-follow",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"top-five-follow"
+					]
+				},
+				"description": "Return top 5 followers"
+			},
+			"response": []
+		},
+		{
+			"name": "posts-for-hour",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/posts-for-hour",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"posts-for-hour"
+					]
+				},
+				"description": "Return posts by hour"
+			},
+			"response": []
+		},
+		{
+			"name": "total-post-hashtag-by-locate",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/total-post-hashtag-by-locate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"total-post-hashtag-by-locate"
+					]
+				},
+				"description": "Return posts by hour"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
