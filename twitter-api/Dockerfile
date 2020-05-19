@@ -1,7 +1,7 @@
 FROM golang:1.14.3-alpine3.11
 COPY ./ /build
 WORKDIR /build
-RUN go mod verify && go build -o twitter-a[o] main.go
+	RUN go mod verify && go build -o twitter-api main.go
 
 FROM alpine:3.11
 RUN mkdir /app
