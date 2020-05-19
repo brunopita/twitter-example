@@ -1,17 +1,109 @@
-version: "2"
-service:
+version: "2.2"
+services:
   twitter-consumer:
-    build: twitter-consumer/Dockerfile
+    build: ./twitter-consumer/
+    depends_on: 
+      elasticsearch:
+        condition: service_started
+      logstash:
+        condition: service_started
+      postgresql:
+        condition: service_healthy
+      twitter-migrate:
+        condition: service_started
     environment: 
-      - TW_CLIENT_ID: QjvLHbuPh9mp8wsF9VIKi4UwS
-      - TW_CLIENT_SECRETE: 1W7w5CWvEnSIFR7YZlcf1aYaHihCJC6rRcwwd5ZDylffGuMYGm
-      - TW_HASHTAG: gopher
-  postgresql:
-    image: postgresql:12.2
+      TW_CLIENT_ID: QjvLHbuPh9mp8wsF9VIKi4UwS
+      TW_CLIENT_SECRETE: 1W7w5CWvEnSIFR7YZlcf1aYaHihCJC6rRcwwd5ZDylffGuMYGm
+      POSTGRES_HOST: postgresql
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: twitter
+      POSTGRES_PASSWORD: teste@123
+      POSTGRES_DATABASE: twitter
+      ELASTIC_APM_SERVER_URL: http://apm-server:8200
+      ELASTIC_APM_SERVICE_NAME: twitter-consumer
+      LOGSTASH_URL: logstash:5000
+  twitter-api:
+    build: ./twitter-api/
+    restart: always
+    depends_on: 
+      elasticsearch:
+        condition: service_started
+      logstash:
+        condition: service_started
+      postgresql:
+        condition: service_healthy
+      twitter-migrate:
+        condition: service_started
     environment: 
-      - POSTGRES_USER: twitter
-      - POSTGRES_PASSWORD: teste@123
+      POSTGRES_HOST: postgresql
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: twitter
+      POSTGRES_PASSWORD: teste@123
+      POSTGRES_DATABASE: twitter
+      ELASTIC_APM_SERVER_URL: http://apm-server:8200
+      ELASTIC_APM_SERVICE_NAME: twitter-api
+      LOGSTASH_URL: logstash:5000
+    ports: 
+      - 3000:3000
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.7.0
+    restart: always
+    depends_on: 
+      elasticsearch:
+        condition: service_started
+    environment:
+      ES_HOST: elasticsearch
+      ES_PORT: 9200
+      path.config: /opt/logstash/bin/logstash.conf
+      INDEX_NAME: twitter
     volumes:
-    - ./postgres:/var/lib/postgres/data
-  ports: 
-    - 15423:5432
+      - ./logstash/logstash.conf:/opt/logstash/bin/logstash.conf            
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    environment:
+      HTTP_PORT: 9200
+      xpack.watcher.enabled: "true"
+      cluster.name: production
+      ES_JAVA_OPTS: -Xms2g -Xmx2g
+      cluster.name: "production"
+      max_num_segments: "1"
+      discovery.type: single-node
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.7.0
+    restart: always
+    environment: 
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      MONITORING_ENABLED: 'true'
+    ports:
+      - 5601:5601
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:7.7.0
+    restart: always
+    command:
+      --strict.perms=false
+    depends_on: 
+      - elasticsearch
+    environment:
+      output.elasticsearch.host: '["elasticsearch:9200"]'
+  postgresql:
+    image: postgres:12.3
+    environment: 
+      POSTGRES_USER: twitter
+      POSTGRES_PASSWORD: teste@123
+      POSTGRES_DATABASE: twitter
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U twitter"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  twitter-migrate:
+    build: ./twitter-migrate/
+    depends_on: 
+      postgresql:
+        condition: service_healthy
+    environment: 
+      POSTGRES_HOST: postgresql
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: twitter
+      POSTGRES_PASSWORD: teste@123
+      POSTGRES_DATABASE: twitter

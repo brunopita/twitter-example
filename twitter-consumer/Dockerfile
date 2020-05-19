@@ -7,4 +7,4 @@ FROM alpine:3.11
 RUN mkdir /app
 WORKDIR /app
 COPY --from=0 /build/twitter-consumer .
-ENTRYPOINT [ "./twitter-consumer" ]
+CMD [ "./twitter-consumer" ]
