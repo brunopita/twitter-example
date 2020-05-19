@@ -5,15 +5,40 @@ import (
 	"net/http"
 
 	"github.com/brunopita/twitter-example/twitter-api/controller"
+	"github.com/brunopita/twitter-example/twitter-pg/tdao"
 )
 
-func TopFiveFollow(resp http.ResponseWriter, req *http.Request) {
-	result := controller.TopFiveFollowController()
-	js, err := json.Marshal(result)
+func TopFiveFollow(w http.ResponseWriter, req *http.Request) {
+	var err error
+	var result []tdao.User
+	result, err = controller.TopFiveFollowController(req.Context())
 	if err != nil {
-		http.Error(resp, err.Error(), http.StatusInternalServerError)
-		return		
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	resp.Header().Set("Content-Type", "application/json")
-	resp.Write(js) 
+	json.NewEncoder(w).Encode(result)
+}
+
+func PostsForHour(w http.ResponseWriter, req *http.Request) {
+	var err error
+	var result []tdao.QttyHourHashtag
+
+	result, err = controller.PostsForHourController(req.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(result)
+}
+
+func TotalPostHashtagByLocate(w http.ResponseWriter, req *http.Request) {
+	var err error
+	var result []tdao.QttyHashtagLocate
+
+	result, err = controller.TotalPostHashtagByLocate(req.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(result)
 }

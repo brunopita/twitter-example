@@ -1,10 +1,20 @@
 package controller
 
-import "testing"
+import (
+	"context"
+	"testing"
+)
 
-func TestController(t *testing.T) {
-	result := TopFiveFollowController()
-	if result == nil {
-		t.Error("Nullo")
+func TestTopFiveeController(t *testing.T) {
+	_, err := TopFiveFollowController(context.Background())
+	if err != nil {
+		t.Error(err)
 	}
-} 
+}
+
+func TestPostsForHourController(t *testing.T) {
+	_, err := PostsForHourController(context.Background())
+	if err != nil {
+		t.Error(err)
+	}
+}

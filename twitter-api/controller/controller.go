@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/brunopita/go-common/commonsys"
@@ -25,17 +26,53 @@ func init() {
 	password := env.GetOrDefault("POSTGRES_PASSWORD", "teste@123")
 	dbname := env.GetOrDefault("POSTGRES_DATABASE", "twitter")
 
-	db, err = spg.GetConnection(host,port,user,password,dbname)
+	db, err = spg.GetConnection(host, port, user, password, dbname)
 	if err != nil {
 		log.Error(err)
 	}
 }
 
-
-func TopFiveFollowController() []tdao.User {
-	result, err := tdao.GetTopFiveUserFollowers(db)
+func TopFiveFollowController(ctx context.Context) ([]tdao.User, error) {
+	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
 		log.Error(err)
+		return nil, err
 	}
-	return result
+	result, err := tdao.GetTopFiveUserFollowers(tx)
+	if err != nil {
+		log.Error(err)
+		return result, err
+	}
+	log.Info(result)
+	return result, nil
+}
+
+func PostsForHourController(ctx context.Context) ([]tdao.QttyHourHashtag, error) {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	result, err := tdao.GetQttyForHourByHashtag(tx)
+	if err != nil {
+		log.Error(err)
+		return result, err
+	}
+	log.Info(result)
+	return result, nil
+}
+
+func TotalPostHashtagByLocate(ctx context.Context) ([]tdao.QttyHashtagLocate, error) {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	result, err := tdao.GetQttyPostForHashtagByLocate(tx)
+	if err != nil {
+		log.Error(err)
+		return result, err
+	}
+	log.Info(result)
+	return result, nil
 }
