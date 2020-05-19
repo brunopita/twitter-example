@@ -96,3 +96,16 @@ func TestGetQttyForHourByHashtag(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestGetQttyPostForHashtagByLocate(t *testing.T) {
+	db, err := spg.GetConnection("192.168.0.153", "15432", "twitter", "teste@123", "twitter")
+	if err != nil {
+		t.Error(err)
+	}
+	defer db.Close()
+
+	_, err = GetQttyPostForHashtagByLocate(db)
+	if err != nil {
+		t.Error(err)
+	}
+}

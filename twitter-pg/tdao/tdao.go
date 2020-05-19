@@ -2,7 +2,6 @@ package tdao
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/brunopita/twitter-example/twitter-pg/utils"
 	"github.com/dghubble/go-twitter/twitter"
@@ -27,6 +26,12 @@ type QttyHourHashtag struct {
 	Hour    string
 	Qtty    int
 	Hashtag string
+}
+
+type QttyHashtagLocate struct {
+	Qtty    int
+	Hashtag string
+	Locate  string
 }
 
 func InsertTweet(tweet Tweet, db *sql.DB) error {
@@ -89,13 +94,31 @@ func GetQttyForHourByHashtag(db *sql.DB) ([]QttyHourHashtag, error) {
 		return nil, err
 	}
 	for rows.Next() {
-		var h QttyHourHashtag
-		err := rows.Scan(&h.Hashtag, &h.Hour, &h.Qtty)
+		var r QttyHourHashtag
+		err := rows.Scan(&r.Hashtag, &r.Hour, &r.Qtty)
 		if err != nil {
 			return nil, err
 		}
-		result = append(result, h)
-		log.Printf("%v", h)
+		result = append(result, r)
+	}
+	return result, nil
+}
+
+func GetQttyPostForHashtagByLocate(db *sql.DB) ([]QttyHashtagLocate, error) {
+	var result []QttyHashtagLocate
+	var query = "select count(*), hashtag, u.locate from tb_tweet inner join tb_user as u on iduser = u.id group by 2,3 order by hashtag;"
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var r QttyHashtagLocate
+		err := rows.Scan(&r.Qtty, &r.Hashtag, &r.Locate)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, r)
 	}
 	return result, nil
 }
