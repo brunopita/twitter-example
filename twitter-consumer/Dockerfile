@@ -1,3 +1,10 @@
-FROM go:1.14.1-alpine
-ENV TW_CLIENT_ID QjvLHbuPh9mp8wsF9VIKi4UwS
-ENV TW_CLIENT_SECRETE 1W7w5CWvEnSIFR7YZlcf1aYaHihCJC6rRcwwd5ZDylffGuMYGm
+FROM golang:1.14.3-alpine3.11
+COPY ./ /build
+WORKDIR /build
+RUN go mod verify && go build -o twitter-consumer main.go
+
+FROM alpine:3.11
+RUN mkdir /app
+WORKDIR /app
+COPY --from=0 /build/twitter-consumer .
+ENTRYPOINT [ "./twitter-consumer" ]
