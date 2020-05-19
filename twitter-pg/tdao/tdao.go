@@ -34,7 +34,7 @@ type QttyHashtagLocate struct {
 	Locate  string
 }
 
-func InsertTweet(tweet Tweet, db *sql.DB) error {
+func InsertTweet(tweet Tweet, db *sql.Tx) error {
 	var query = "INSERT INTO tb_tweet values ($1, $2, $3, $4, $5) ON CONFLICT (id) DO NOTHING"
 	createAt, err := utils.StringToTimestampPostgres(tweet.CreateAt)
 	if err != nil {
@@ -47,7 +47,7 @@ func InsertTweet(tweet Tweet, db *sql.DB) error {
 	return nil
 }
 
-func InsertUser(user User, db *sql.DB) error {
+func InsertUser(user User, db *sql.Tx) error {
 	var query = "INSERT INTO tb_user values ($1, $2, $3, $4) ON CONFLICT (id) DO NOTHING"
 	_, err := db.Exec(query, user.Id, user.Name, user.Followers, user.Locate)
 	if err != nil {
@@ -56,19 +56,19 @@ func InsertUser(user User, db *sql.DB) error {
 	return nil
 }
 
-func DeleteUser(id int64, db *sql.DB) error {
+func DeleteUser(id int64, db *sql.Tx) error {
 	var query = "DELETE FROM tb_user where id = $1"
 	db.QueryRow(query, id)
 	return nil
 }
 
-func DeleteTweet(id int64, db *sql.DB) error {
+func DeleteTweet(id int64, db *sql.Tx) error {
 	var query = "DELETE FROM tb_tweet where id = $1"
 	db.QueryRow(query, id)
 	return nil
 }
 
-func GetTopFiveUserFollowers(db *sql.DB) ([]User, error) {
+func GetTopFiveUserFollowers(db *sql.Tx) ([]User, error) {
 	var result []User
 	var query = "SELECT name, followers, locate FROM tb_user ORDER BY followers DESC limit 5"
 	rows, err := db.Query(query)
@@ -86,7 +86,7 @@ func GetTopFiveUserFollowers(db *sql.DB) ([]User, error) {
 	return result, nil
 }
 
-func GetQttyForHourByHashtag(db *sql.DB) ([]QttyHourHashtag, error) {
+func GetQttyForHourByHashtag(db *sql.Tx) ([]QttyHourHashtag, error) {
 	var result []QttyHourHashtag
 	var query = "select  hashtag, extract(hour from createat), count(1) from tb_tweet group by 2, hashtag order by 2,1;"
 	rows, err := db.Query(query)
@@ -104,7 +104,7 @@ func GetQttyForHourByHashtag(db *sql.DB) ([]QttyHourHashtag, error) {
 	return result, nil
 }
 
-func GetQttyPostForHashtagByLocate(db *sql.DB) ([]QttyHashtagLocate, error) {
+func GetQttyPostForHashtagByLocate(db *sql.Tx) ([]QttyHashtagLocate, error) {
 	var result []QttyHashtagLocate
 	var query = "select count(*), hashtag, u.locate from tb_tweet inner join tb_user as u on iduser = u.id group by 2,3 order by hashtag;"
 

@@ -27,10 +27,17 @@ func TestInsertUser(t *testing.T) {
 	}
 	defer db.Close()
 
-	err = InsertUser(user, db)
+	tx, err := db.Begin()
 	if err != nil {
 		t.Error(err)
 	}
+
+	err = InsertUser(user, tx)
+	if err != nil {
+		t.Error(err)
+		tx.Rollback()
+	}
+	tx.Commit()
 }
 
 func TestDeleteUser(t *testing.T) {
@@ -40,10 +47,16 @@ func TestDeleteUser(t *testing.T) {
 	}
 	defer db.Close()
 
-	err = DeleteUser(user.Id, db)
+	tx, err := db.Begin()
 	if err != nil {
 		t.Error(err)
 	}
+	err = DeleteUser(user.Id, tx)
+	if err != nil {
+		tx.Rollback()
+		t.Error(err)
+	}
+	tx.Commit()
 }
 
 func TestInsertTweet(t *testing.T) {
@@ -53,10 +66,17 @@ func TestInsertTweet(t *testing.T) {
 	}
 	defer db.Close()
 
-	err = InsertTweet(tweet, db)
+	tx, err := db.Begin()
 	if err != nil {
 		t.Error(err)
 	}
+
+	err = InsertTweet(tweet, tx)
+	if err != nil {
+		t.Error(err)
+		tx.Rollback()
+	}
+	tx.Commit()
 }
 
 func TestDeleteTweet(t *testing.T) {
@@ -66,10 +86,17 @@ func TestDeleteTweet(t *testing.T) {
 	}
 	defer db.Close()
 
-	err = DeleteTweet(tweet.Id, db)
+	tx, err := db.Begin()
 	if err != nil {
 		t.Error(err)
 	}
+
+	err = DeleteTweet(tweet.Id, tx)
+	if err != nil {
+		t.Error(err)
+		tx.Rollback()
+	}
+	tx.Commit()
 }
 func TestTopFiveFollowers(t *testing.T) {
 	db, err := spg.GetConnection("192.168.0.153", "15432", "twitter", "teste@123", "twitter")
@@ -78,10 +105,17 @@ func TestTopFiveFollowers(t *testing.T) {
 	}
 	defer db.Close()
 
-	_, err = GetTopFiveUserFollowers(db)
+	tx, err := db.Begin()
 	if err != nil {
 		t.Error(err)
 	}
+
+	_, err = GetTopFiveUserFollowers(tx)
+	if err != nil {
+		t.Error(err)
+		tx.Rollback()
+	}
+	tx.Commit()
 }
 
 func TestGetQttyForHourByHashtag(t *testing.T) {
@@ -91,10 +125,17 @@ func TestGetQttyForHourByHashtag(t *testing.T) {
 	}
 	defer db.Close()
 
-	_, err = GetQttyForHourByHashtag(db)
+	tx, err := db.Begin()
 	if err != nil {
 		t.Error(err)
 	}
+
+	_, err = GetQttyForHourByHashtag(tx)
+	if err != nil {
+		t.Error(err)
+		tx.Rollback()
+	}
+	tx.Commit()
 }
 
 func TestGetQttyPostForHashtagByLocate(t *testing.T) {
@@ -104,8 +145,15 @@ func TestGetQttyPostForHashtagByLocate(t *testing.T) {
 	}
 	defer db.Close()
 
-	_, err = GetQttyPostForHashtagByLocate(db)
+	tx, err := db.Begin()
 	if err != nil {
 		t.Error(err)
 	}
+
+	_, err = GetQttyPostForHashtagByLocate(tx)
+	if err != nil {
+		t.Error(err)
+		tx.Rollback()
+	}
+	tx.Commit()
 }
