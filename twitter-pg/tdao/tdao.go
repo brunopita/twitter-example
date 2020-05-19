@@ -23,9 +23,10 @@ type User struct {
 	Locate    string
 }
 
-type HourQtty struct {
-	Hour string
-	Qtty int
+type QttyHourHashtag struct {
+	Hour    string
+	Qtty    int
+	Hashtag string
 }
 
 func InsertTweet(tweet Tweet, db *sql.DB) error {
@@ -80,16 +81,16 @@ func GetTopFiveUserFollowers(db *sql.DB) ([]User, error) {
 	return result, nil
 }
 
-func GetPostByHour(db *sql.DB) ([]HourQtty, error) {
-	var result []HourQtty
-	var query = "SELECT date_trunc('hour', createAt), count(1) FROM tb_tweet GROUP BY 1"
+func GetQttyForHourByHashtag(db *sql.DB) ([]QttyHourHashtag, error) {
+	var result []QttyHourHashtag
+	var query = "select  hashtag, extract(hour from createat), count(1) from tb_tweet group by 2, hashtag order by 2,1;"
 	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
 	}
 	for rows.Next() {
-		var h HourQtty
-		err := rows.Scan(&h.Hour, &h.Qtty)
+		var h QttyHourHashtag
+		err := rows.Scan(&h.Hashtag, &h.Hour, &h.Qtty)
 		if err != nil {
 			return nil, err
 		}
